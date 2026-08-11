@@ -1,162 +1,122 @@
-"use client";
+import React from 'react';
+import Link from 'next/link';
+import { Camera, UtensilsCrossed, Sparkles, ChefHat } from 'lucide-react';
 
-import React, { useState } from "react";
-import { Camera, UploadCloud, Plus } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Chip } from "@/components/ui/Chip";
-import { CheckboxGrid } from "@/components/CheckboxGrid";
-import { useRouter } from "next/navigation";
-
-export default function Home() {
-  const router = useRouter();
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [ingredients, setIngredients] = useState<string[]>([]);
-  const [manualInput, setManualInput] = useState("");
-
-  const pantryOptions = [
-    "Garam",
-    "Minyak Goreng",
-    "Bawang Putih",
-    "Kecap",
-    "Cabai",
-    "Lada",
+export default function LandingPage() {
+  const quickRecipes = [
+    { title: "Nasi Goreng Sisa", time: "10 menit", difficulty: "Mudah" },
+    { title: "Telur Dadar Mie", time: "12 menit", difficulty: "Mudah" },
+    { title: "Tumis Sayur Sosis", time: "15 menit", difficulty: "Sedang" },
   ];
-  const [selectedPantry, setSelectedPantry] = useState<string[]>([
-    "Garam",
-    "Minyak Goreng",
-  ]);
-
-  const handleUploadClick = () => {
-    setIsProcessing(true);
-    setTimeout(() => {
-      setIngredients(["Telur", "Tomat", "Daun Bawang"]);
-      setIsProcessing(false);
-    }, 2000);
-  };
-
-  const handleRemoveIngredient = (ing: string) => {
-    setIngredients(ingredients.filter((i) => i !== ing));
-  };
-
-  const handleAddManual = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (manualInput.trim() && !ingredients.includes(manualInput.trim())) {
-      setIngredients([...ingredients, manualInput.trim()]);
-      setManualInput("");
-    }
-  };
-
-  const togglePantry = (option: string) => {
-    if (selectedPantry.includes(option)) {
-      setSelectedPantry(selectedPantry.filter((o) => o !== option));
-    } else {
-      setSelectedPantry([...selectedPantry, option]);
-    }
-  };
-
-  const handleGenerateRecipe = () => {
-    localStorage.setItem(
-      "userIngredients",
-      JSON.stringify({ ingredients, selectedPantry }),
-    );
-    router.push("/recipes");
-  };
 
   return (
-    <main className="flex-1 p-6 flex flex-col relative overflow-y-auto">
-      {/* Header */}
-      <header className="mb-8 text-center mt-6">
-        <h1 className="text-3xl font-bold text-text-main mb-3 font-sans">
-          KulKul 🍳
-        </h1>
-        <p className="text-text-muted text-sm px-4">
-          Foto bahan di kulkasmu, kami buatkan resep lezatnya.
-        </p>
+    <main className="flex-1 flex flex-col relative overflow-y-auto pb-8 bg-bg-app">
+      {/* Header Greeting */}
+      <header className="px-6 pt-10 pb-6 flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-text-main font-sans">Halo, mau masak apa hari ini? 👋</h2>
+          <p className="text-text-muted text-sm mt-1">Kulik isi kulkasmu, masak lezat tanpa pusing!</p>
+        </div>
+        <div className="bg-primary/10 p-2 rounded-xl">
+          <UtensilsCrossed className="text-primary" size={24} />
+        </div>
       </header>
 
-      {/* Upload Zone */}
-      <div
-        className="border-2 border-dashed border-primary/40 bg-primary/5 rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-primary/10 transition-colors mb-6 shadow-sm"
-        onClick={handleUploadClick}
-      >
-        <div className="bg-white p-4 rounded-full shadow-sm mb-4">
-          <Camera size={36} className="text-primary" />
+      {/* Hero CTA Banner */}
+      <div className="px-6 mb-10">
+        <div className="bg-primary rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
+          <div className="relative z-10">
+            <h3 className="text-2xl font-bold mb-2 pr-10">Punya Sisa Bahan di Kulkas?</h3>
+            <p className="text-white/80 text-sm mb-6 max-w-[90%] leading-relaxed">
+              Foto bahan makananmu sekarang, biar AI racikkan resep lezatnya dalam hitungan detik!
+            </p>
+            <Link href="/upload" className="block">
+              <button className="bg-white text-primary font-bold px-5 py-3.5 rounded-xl flex items-center gap-2 hover:bg-white/90 transition-colors w-full justify-center shadow-sm">
+                <Camera size={20} />
+                Mulai Kulik Kulkas
+              </button>
+            </Link>
+          </div>
+          {/* Decorative element */}
+          <Sparkles className="absolute top-4 right-4 text-white/20" size={80} strokeWidth={1} />
         </div>
-        <h3 className="font-bold text-lg mb-1">
-          Ambil / Upload Foto Isi Kulkas
-        </h3>
-        <p className="text-sm text-text-muted mt-1">
-          Klik untuk mencoba (Simulasi AI)
-        </p>
       </div>
 
-      {isProcessing && (
-        <div className="flex flex-col items-center justify-center py-10">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-primary mb-5"></div>
-          <p className="text-text-muted font-medium animate-pulse">
-            Sedang mengintip isi kulkasmu...
+      {/* Quick Recipe Carousel */}
+      <div className="mb-10">
+        <h3 className="font-bold text-text-main px-6 mb-4">Resep Kilat Bahan Seadanya</h3>
+        <div className="flex overflow-x-auto px-6 gap-4 pb-4" style={{ scrollbarWidth: 'none' }}>
+          {quickRecipes.map((recipe, idx) => (
+            <div key={idx} className="min-w-[200px] bg-white border border-border rounded-2xl p-4 shadow-sm flex flex-col justify-between gap-4">
+              <div className="h-28 bg-primary/5 rounded-xl flex items-center justify-center">
+                <ChefHat className="text-primary/30" size={40} />
+              </div>
+              <div>
+                <h4 className="font-bold text-text-main text-sm">{recipe.title}</h4>
+                <div className="flex gap-2 mt-3">
+                  <span className="text-[10px] font-medium px-2 py-1 bg-secondary/10 text-secondary rounded-full flex items-center gap-1">
+                    ⏱️ {recipe.time}
+                  </span>
+                  <span className="text-[10px] font-medium px-2 py-1 bg-accent/20 text-[#D97706] rounded-full flex items-center gap-1">
+                    ⭐ {recipe.difficulty}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* About Section */}
+      <div className="mx-6 mb-8 bg-white p-6 rounded-2xl border border-border shadow-sm flex gap-4 items-start">
+        <div className="bg-primary/10 p-3 rounded-xl shrink-0">
+          <Sparkles className="text-primary" size={24} />
+        </div>
+        <div>
+          <h3 className="font-bold text-text-main text-sm mb-2">Tentang KulKul</h3>
+          <p className="text-text-muted text-xs leading-relaxed">
+            KulKul adalah asisten dapur pintar yang membantu kamu mendeteksi bahan makanan dari foto kulkas, mengurangi food waste, dan menyajikan panduan langkah memasak interaktif yang bebas ribet.
           </p>
         </div>
-      )}
+      </div>
 
-      {ingredients.length > 0 && !isProcessing && (
-        <div className="flex-1 flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
-          {/* Ingredients */}
-          <div className="mb-8 bg-white p-5 rounded-2xl shadow-sm border border-border">
-            <h3 className="font-bold mb-4 text-text-main">Bahan Terdeteksi:</h3>
-            <div className="flex flex-wrap gap-2 mb-4">
-              {ingredients.map((ing) => (
-                <Chip
-                  key={ing}
-                  label={ing}
-                  onRemove={() => handleRemoveIngredient(ing)}
-                />
-              ))}
-            </div>
-
-            <form onSubmit={handleAddManual} className="flex gap-2">
-              <input
-                type="text"
-                value={manualInput}
-                onChange={(e) => setManualInput(e.target.value)}
-                placeholder="Ada yang kelewat? Tambah manual..."
-                className="flex-1 bg-bg-app border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary transition-colors"
-              />
-              <button
-                type="submit"
-                className="bg-accent text-white w-12 h-12 rounded-xl flex items-center justify-center hover:brightness-105 shadow-sm transition-all"
-              >
-                <Plus size={24} />
-              </button>
-            </form>
+      {/* Stepper Guide */}
+      <div className="mb-8 bg-white p-6 mx-6 rounded-2xl border border-border shadow-sm">
+        <h3 className="font-bold text-text-main mb-6">Cara Pakai KulKul</h3>
+        
+        <div className="flex gap-4 mb-2">
+          <div className="flex flex-col items-center">
+            <div className="w-8 h-8 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center font-bold text-sm shrink-0 z-10">1</div>
+            <div className="w-0.5 h-8 bg-border my-1 shrink-0"></div>
           </div>
-
-          {/* Pantry Staples */}
-          <div className="mb-6">
-            <h3 className="font-bold mb-3 text-text-main ml-1">
-              Bumbu Dasar di Dapur:
-            </h3>
-            <CheckboxGrid
-              options={pantryOptions}
-              selectedOptions={selectedPantry}
-              onChange={togglePantry}
-            />
+          <div className="pb-4">
+            <h4 className="font-bold text-text-main text-sm">📸 Foto Isi Kulkas</h4>
+            <p className="text-text-muted text-xs mt-1 leading-relaxed">Ambil atau upload foto sisa bahan makanan yang ada di kulkasmu.</p>
           </div>
         </div>
-      )}
 
-      {/* CTA Button Fixed at Bottom if ingredients exist */}
-      {ingredients.length > 0 && !isProcessing && (
-        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-bg-app via-bg-app to-transparent pt-12">
-          <Button
-            fullWidth
-            onClick={handleGenerateRecipe}
-            className="shadow-lg shadow-primary/20"
-          >
-            Cari Resep Masakan
-          </Button>
+        <div className="flex gap-4 mb-2">
+          <div className="flex flex-col items-center">
+            <div className="w-8 h-8 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center font-bold text-sm shrink-0 z-10">2</div>
+            <div className="w-0.5 h-8 bg-border my-1 shrink-0"></div>
+          </div>
+          <div className="pb-4">
+            <h4 className="font-bold text-text-main text-sm">🤖 AI Racik Resep</h4>
+            <p className="text-text-muted text-xs mt-1 leading-relaxed">KulKul mendeteksi bahan otomatis dan meracik pilihan resep lezat.</p>
+          </div>
         </div>
-      )}
+
+        <div className="flex gap-4">
+          <div className="flex flex-col items-center">
+            <div className="w-8 h-8 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center font-bold text-sm shrink-0 z-10">3</div>
+          </div>
+          <div>
+            <h4 className="font-bold text-text-main text-sm">🍳 Masak Tanpa Pusing</h4>
+            <p className="text-text-muted text-xs mt-1 leading-relaxed">Pilih resep favoritmu dan ikuti mode memasak interaktif langkah demi langkah.</p>
+          </div>
+        </div>
+      </div>
+
     </main>
   );
 }
