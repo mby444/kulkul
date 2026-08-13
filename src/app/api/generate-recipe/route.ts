@@ -54,7 +54,7 @@ Instruksi:
 5. Semua bahasa dalam bahasa Indonesia.`;
 
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-flash-latest",
       contents: prompt,
       config: {
         responseMimeType: "application/json",

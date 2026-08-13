@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Camera, Plus, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
@@ -10,6 +10,7 @@ import { useAppStore } from "@/store/useAppStore";
 
 export default function UploadPage() {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     ingredients,
@@ -42,17 +43,41 @@ export default function UploadPage() {
   ];
 
   const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
     setIsProcessing(true);
-    setTimeout(() => {
-      // Simulate AI returning ingredients
-      const dummyDetected = ["Telur", "Tomat", "Daun Bawang", "Sosis"];
-      // Merge with existing ingredients
-      const newIngredients = Array.from(
-        new Set([...ingredients, ...dummyDetected]),
-      );
-      setIngredients(newIngredients);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const res = await fetch('/api/analyze-image', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!res.ok) {
+        throw new Error('Gagal menganalisis gambar');
+      }
+
+      const data = await res.json();
+      if (data.detected_ingredients) {
+        const newIngredients = Array.from(
+          new Set([...ingredients, ...data.detected_ingredients]),
+        );
+        setIngredients(newIngredients);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Terjadi kesalahan saat memproses gambar.");
+    } finally {
       setIsProcessing(false);
-    }, 2000);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   const handleRemoveIngredient = (ing: string) => {
@@ -98,6 +123,13 @@ export default function UploadPage() {
       </div>
 
       <div className="p-6">
+        <input 
+          type="file" 
+          accept="image/*" 
+          className="hidden" 
+          ref={fileInputRef} 
+          onChange={handleFileChange} 
+        />
         {/* Upload Zone */}
         <div
           className="border-2 border-dashed border-primary/40 bg-primary/5 rounded-3xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-primary/10 transition-colors mb-8 shadow-sm"

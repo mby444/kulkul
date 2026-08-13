@@ -13,6 +13,8 @@ export default function RecipesPage() {
     generatedRecipes,
     setGeneratedRecipes,
     ingredients,
+    selectedPantry,
+    cookingStyle,
     setCurrentRecipeId,
   } = useAppStore();
   const [isGenerating, setIsGenerating] = useState(false);
@@ -21,97 +23,38 @@ export default function RecipesPage() {
   useEffect(() => {
     if (!isHydrated) return;
 
-    // Simulate AI Generation if there are no generated recipes yet
     if (generatedRecipes.length === 0) {
       setIsGenerating(true);
+      
+      const generateAI = async () => {
+        try {
+          const res = await fetch('/api/generate-recipe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ingredients,
+              pantryStaples: selectedPantry,
+              cookingStyle
+            })
+          });
 
-      setTimeout(() => {
-        const mockRecipes: Recipe[] = [
-          {
-            id: "r1",
-            title: "Omelet Tomat Gurih",
-            description:
-              "Sarapan praktis yang menggabungkan manisnya tomat dan gurihnya telur dadar, cocok dipadukan dengan daun bawang.",
-            prep_time_minutes: 10,
-            difficulty: "Mudah",
-            ingredients_used: [
-              "Telur",
-              "Tomat",
-              "Daun Bawang",
-              "Garam",
-              "Minyak Goreng",
-            ],
-            pantry_stables_needed: ["Garam", "Minyak Goreng"],
-            steps: [
-              {
-                step_number: 1,
-                instruction: "Potong dadu tomat dan iris tipis daun bawang.",
-                timer_seconds: 0,
-              },
-              {
-                step_number: 2,
-                instruction:
-                  "Kocok telur, masukkan tomat, daun bawang, dan sejumput garam.",
-                timer_seconds: 0,
-              },
-              {
-                step_number: 3,
-                instruction:
-                  "Panaskan sedikit minyak goreng di teflon, lalu tuang adonan telur.",
-                timer_seconds: 0,
-              },
-              {
-                step_number: 4,
-                instruction:
-                  "Masak hingga matang kecokelatan, balik perlahan, lalu angkat dan sajikan.",
-                timer_seconds: 180,
-              },
-            ],
-          },
-          {
-            id: "r2",
-            title: "Sosis Tumis Bawang",
-            description:
-              "Menu simpel untuk anak kos. Sosis digoreng tumis dengan taburan daun bawang dan sedikit lada.",
-            prep_time_minutes: 12,
-            difficulty: "Mudah",
-            ingredients_used: [
-              "Sosis",
-              "Daun Bawang",
-              "Minyak Goreng",
-              "Bawang Putih",
-            ],
-            pantry_stables_needed: ["Minyak Goreng", "Bawang Putih"],
-            steps: [
-              {
-                step_number: 1,
-                instruction:
-                  "Iris serong sosis dan cincang kasar bawang putih.",
-                timer_seconds: 0,
-              },
-              {
-                step_number: 2,
-                instruction: "Tumis bawang putih hingga harum.",
-                timer_seconds: 60,
-              },
-              {
-                step_number: 3,
-                instruction:
-                  "Masukkan sosis, tumis hingga mekar dan kecokelatan.",
-                timer_seconds: 120,
-              },
-              {
-                step_number: 4,
-                instruction:
-                  "Taburkan irisan daun bawang, aduk sebentar, lalu angkat.",
-                timer_seconds: 0,
-              },
-            ],
-          },
-        ];
-        setGeneratedRecipes(mockRecipes);
-        setIsGenerating(false);
-      }, 3000);
+          if (!res.ok) {
+            throw new Error('Gagal meracik resep');
+          }
+
+          const data = await res.json();
+          if (data.recipes) {
+            setGeneratedRecipes(data.recipes);
+          }
+        } catch (error) {
+          console.error(error);
+          alert("Terjadi kesalahan saat meracik resep dengan AI.");
+        } finally {
+          setIsGenerating(false);
+        }
+      };
+
+      generateAI();
     }
   }, [isHydrated]);
 
