@@ -7,6 +7,8 @@ import { useAppStore } from '@/store/useAppStore';
 import useIsHydrated from '@/hooks/useIsHydrated';
 import { Button } from '@/components/ui/Button';
 
+import confetti from 'canvas-confetti';
+
 // Simple Timer Component inside file
 const StepTimer = ({ seconds }: { seconds: number }) => {
   const [timeLeft, setTimeLeft] = useState(seconds);
@@ -62,6 +64,7 @@ export default function CookPage({ params }: { params: Promise<{ id: string }> }
   const router = useRouter();
   const isHydrated = useIsHydrated();
   const { generatedRecipes, currentCookStep, setCurrentCookStep, clearSession } = useAppStore();
+  const [isFinishing, setIsFinishing] = useState(false);
 
   const recipe = generatedRecipes.find(r => r.id === id);
 
@@ -102,8 +105,17 @@ export default function CookPage({ params }: { params: Promise<{ id: string }> }
   };
 
   const handleFinish = () => {
-    clearSession();
-    router.replace('/');
+    setIsFinishing(true);
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+
+    setTimeout(() => {
+      clearSession();
+      router.replace('/');
+    }, 3000);
   };
 
   return (
@@ -150,8 +162,10 @@ export default function CookPage({ params }: { params: Promise<{ id: string }> }
         </button>
         
         {currentCookStep === totalSteps ? (
-          <Button onClick={handleFinish} className="flex-1 h-14 text-lg">
-            Selesai <Check size={20} className="ml-2" />
+          <Button onClick={handleFinish} disabled={isFinishing} className="flex-1 h-14 text-lg">
+            {isFinishing ? 'Yey, Selesai! 🎉' : (
+              <>Selesai <Check size={20} className="ml-2 inline" /></>
+            )}
           </Button>
         ) : (
           <Button onClick={handleNext} className="flex-1 h-14 text-lg bg-text-main text-white hover:bg-black">
