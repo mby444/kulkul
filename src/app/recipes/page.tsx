@@ -113,7 +113,7 @@ export default function RecipesPage() {
         setIsGenerating(false);
       }, 3000);
     }
-  }, [generatedRecipes.length, setGeneratedRecipes]);
+  }, [isHydrated]);
 
   const handleCookClick = (id: string) => {
     setCurrentRecipeId(id);
