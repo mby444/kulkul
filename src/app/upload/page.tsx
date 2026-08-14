@@ -46,22 +46,102 @@ export default function UploadPage() {
     fileInputRef.current?.click();
   };
 
+  const compressImage = (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        if (!ctx) return resolve(file); // Fallback jika canvas tidak disupport
+
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              const newFile = new File(
+                [blob],
+                file.name.replace(/\.[^/.]+$/, "") + ".webp",
+                {
+                  type: "image/webp",
+                  lastModified: Date.now(),
+                },
+              );
+              resolve(newFile);
+            } else {
+              resolve(file);
+            }
+          },
+          "image/webp",
+          0.8,
+        ); // Kompres kualitas webp ke 80%
+      };
+
+      img.onerror = () =>
+        reject(new Error("Gagal meload gambar untuk kompresi"));
+      img.src = url;
+    });
+  };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validasi tipe file (MIME)
+    if (!file.type.startsWith("image/")) {
+      alert("Harap unggah file berupa gambar (JPEG, PNG, webp, dsb).");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+
     setIsProcessing(true);
     try {
-      const formData = new FormData();
-      formData.append('image', file);
+      // Kompresi dan resize gambar
+      const compressedFile = await compressImage(file);
+      console.log("compressedFile", compressedFile);
 
-      const res = await fetch('/api/analyze-image', {
-        method: 'POST',
-        body: formData
+      // Validasi ukuran setelah kompresi (opsional pencegahan akhir)
+      const MAX_SIZE_MB = 4;
+      if (compressedFile.size > MAX_SIZE_MB * 1024 * 1024) {
+        alert(`Ukuran gambar terlalu besar! Maksimal ${MAX_SIZE_MB}MB.`);
+        setIsProcessing(false);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("image", compressedFile);
+
+      const res = await fetch("/api/analyze-image", {
+        method: "POST",
+        body: formData,
       });
 
       if (!res.ok) {
-        throw new Error('Gagal menganalisis gambar');
+        throw new Error("Gagal menganalisis gambar");
       }
 
       const data = await res.json();
@@ -76,7 +156,7 @@ export default function UploadPage() {
       alert("Terjadi kesalahan saat memproses gambar.");
     } finally {
       setIsProcessing(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
@@ -123,12 +203,12 @@ export default function UploadPage() {
       </div>
 
       <div className="p-6">
-        <input 
-          type="file" 
-          accept="image/*" 
-          className="hidden" 
-          ref={fileInputRef} 
-          onChange={handleFileChange} 
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          ref={fileInputRef}
+          onChange={handleFileChange}
         />
         {/* Upload Zone */}
         <div

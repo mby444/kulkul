@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
+import { callAIWithRetry } from "@/lib/callAIWithRetry";
 
 // Zod Schema untuk memvalidasi output dari AI
 const AnalyzeResponseSchema = z.object({
@@ -28,42 +29,8 @@ export async function POST(req: NextRequest) {
     const base64Image = buffer.toString("base64");
     const mimeType = file.type;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-flash-latest",
-      contents: [
-        {
-          role: "user",
-          parts: [
-            {
-              text: 'Identifikasi bahan-bahan makanan mentah atau bahan masakan yang ada di dalam gambar ini. Abaikan botol minuman ringan, makanan jadi, wadah kosong, atau objek non-makanan. Kembalikan array string berisi nama-nama bahan dasar dalam bahasa Indonesia (misal: "Tomat", "Telur", "Bawang Putih").',
-            },
-            {
-              inlineData: {
-                data: base64Image,
-                mimeType: mimeType,
-              },
-            },
-          ],
-        },
-      ],
-      config: {
-        responseMimeType: "application/json",
-        // Format JSON Schema agar AI mengembalikan format yang konsisten
-        responseSchema: {
-          type: "OBJECT",
-          properties: {
-            detected_ingredients: {
-              type: "ARRAY",
-              description:
-                "Daftar bahan makanan mentah (sayur, daging, bumbu dasar) yang terdeteksi. Gunakan bahasa Indonesia.",
-              items: {
-                type: "STRING",
-              },
-            },
-          },
-          required: ["detected_ingredients"],
-        },
-      },
+    const response = await callAIWithRetry(async () => {
+      return await analyzeImageWithAI(base64Image, mimeType);
     });
 
     const text = response.text;
@@ -79,11 +46,54 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Error saat menganalisis gambar:", error);
     return NextResponse.json(
-      { 
-        error: "Gagal menganalisis gambar.", 
-        details: error instanceof Error ? error.message : "Terjadi kesalahan tidak dikenal" 
+      {
+        error: "Gagal menganalisis gambar.",
+        details:
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan tidak dikenal",
       },
       { status: 500 },
     );
   }
+}
+
+function analyzeImageWithAI(base64Image: string, mimeType: string) {
+  return ai.models.generateContent({
+    model: "gemini-flash-latest",
+    contents: [
+      {
+        role: "user",
+        parts: [
+          {
+            text: 'Identifikasi bahan-bahan makanan mentah atau bahan masakan yang ada di dalam gambar ini. Abaikan botol minuman ringan, makanan jadi, wadah kosong, atau objek non-makanan. Kembalikan array string berisi nama-nama bahan dasar dalam bahasa Indonesia (misal: "Tomat", "Telur", "Bawang Putih").',
+          },
+          {
+            inlineData: {
+              data: base64Image,
+              mimeType: mimeType,
+            },
+          },
+        ],
+      },
+    ],
+    config: {
+      responseMimeType: "application/json",
+      // Format JSON Schema agar AI mengembalikan format yang konsisten
+      responseSchema: {
+        type: "OBJECT",
+        properties: {
+          detected_ingredients: {
+            type: "ARRAY",
+            description:
+              "Daftar bahan makanan mentah (sayur, daging, bumbu dasar) yang terdeteksi. Gunakan bahasa Indonesia.",
+            items: {
+              type: "STRING",
+            },
+          },
+        },
+        required: ["detected_ingredients"],
+      },
+    },
+  });
 }
