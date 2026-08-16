@@ -25,21 +25,50 @@ export default function RecipesPage() {
 
     if (generatedRecipes.length === 0) {
       setIsGenerating(true);
-      
+
       const generateAI = async () => {
         try {
-          const res = await fetch('/api/generate-recipe', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          // --- MOCK DATA SEMENTARA (HEMAT QUOTA) ---
+          // setTimeout(() => {
+          //   setGeneratedRecipes([
+          //     {
+          //       id: "mock1",
+          //       title: "Nasi Goreng Telur Spesial",
+          //       description: "Nasi goreng lezat dengan bumbu rahasia dapur.",
+          //       prep_time_minutes: 15,
+          //       difficulty: "Mudah",
+          //       ingredients_used: ["Nasi", "Telur", "Bawang Putih"],
+          //       pantry_stables_needed: ["Minyak Goreng", "Garam", "Kecap"],
+          //       steps: []
+          //     },
+          //     {
+          //       id: "mock2",
+          //       title: "Omelet Sayur Keju Gurih",
+          //       description: "Omelet gurih dan sehat, cocok untuk sarapan.",
+          //       prep_time_minutes: 10,
+          //       difficulty: "Sedang",
+          //       ingredients_used: ["Telur", "Keju", "Bayam"],
+          //       pantry_stables_needed: ["Garam", "Minyak Goreng", "Lada"],
+          //       steps: []
+          //     }
+          //   ]);
+          //   setIsGenerating(false);
+          // }, 2000);
+          // return;
+          // ----------------------------------------
+
+          const res = await fetch("/api/generate-recipe", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               ingredients,
               pantryStaples: selectedPantry,
-              cookingStyle
-            })
+              cookingStyle,
+            }),
           });
 
           if (!res.ok) {
-            throw new Error('Gagal meracik resep');
+            throw new Error("Gagal meracik resep");
           }
 
           const data = await res.json();
@@ -103,7 +132,7 @@ export default function RecipesPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-6 animate-in slide-in-from-bottom-8 duration-700">
-            {generatedRecipes.map((recipe) => (
+            {generatedRecipes.map((recipe, index) => (
               <RecipeCard
                 key={recipe.id}
                 id={recipe.id}
@@ -115,8 +144,9 @@ export default function RecipesPage() {
                 tags={recipe.ingredients_used.filter(
                   (i) => !recipe.pantry_stables_needed.includes(i),
                 )}
-                imageUrl={`https://images.unsplash.com/photo-${recipe.id === "r1" ? "1546069901-ba9599a7e63c" : "1550547660-d9450f859349"}?w=800&q=80`}
+                imageUrl={`https://image.pollinations.ai/prompt/${encodeURIComponent(recipe.title + " delicious food photography high quality")}?width=800&height=600&nologo=true`}
                 onCookClick={handleCookClick}
+                index={index}
               />
             ))}
 

@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 
 function analyzeImageWithAI(base64Image: string, mimeType: string) {
   return ai.models.generateContent({
-    model: "gemini-flash-latest",
+    model: "gemini-3.1-flash-lite",
     contents: [
       {
         role: "user",

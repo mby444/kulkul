@@ -89,7 +89,7 @@ Instruksi:
 5. Semua bahasa dalam bahasa Indonesia.`;
 
   return ai.models.generateContent({
-    model: "gemini-flash-latest",
+    model: "gemini-3.1-flash-lite",
     contents: prompt,
     config: {
       responseMimeType: "application/json",
