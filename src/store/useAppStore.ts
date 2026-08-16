@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type Recipe = {
   id: string;
@@ -20,7 +20,7 @@ type AppState = {
   currentRecipeId: string | null;
   currentCookStep: number;
   previewUrl: string | null;
-  
+
   setIngredients: (ingredients: string[]) => void;
   setSelectedPantry: (pantry: string[]) => void;
   setCookingStyle: (style: string) => void;
@@ -49,17 +49,19 @@ export const useAppStore = create<AppState>()(
       setCurrentRecipeId: (currentRecipeId) => set({ currentRecipeId }),
       setCurrentCookStep: (currentCookStep) => set({ currentCookStep }),
       setPreviewUrl: (previewUrl) => set({ previewUrl }),
-      clearSession: () => set({
-        ingredients: [],
-        selectedPantry: ["Garam", "Minyak Goreng"],
-        cookingStyle: "Santai / Ala Kosan",
-        generatedRecipes: [],
-        currentRecipeId: null,
-        currentCookStep: 1,
-      }),
+      clearSession: () =>
+        set({
+          ingredients: [],
+          selectedPantry: ["Garam", "Minyak Goreng"],
+          cookingStyle: "Santai / Ala Kosan",
+          generatedRecipes: [],
+          currentRecipeId: null,
+          currentCookStep: 1,
+          previewUrl: null,
+        }),
     }),
     {
-      name: 'kulkul-storage',
-    }
-  )
+      name: "kulkul-storage",
+    },
+  ),
 );

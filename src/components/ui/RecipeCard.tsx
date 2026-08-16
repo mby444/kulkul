@@ -32,7 +32,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
 
   useEffect(() => {
     // Delay 1.5 detik untuk tiap urutan kartu agar tidak kena 429 Pollinations
-    const delay = index * 1500;
+    const delay = index * 3000;
     const timer = setTimeout(() => {
       setShouldLoadImage(true);
     }, delay);
@@ -44,10 +44,18 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
       {/* Image Area */}
       <div className="relative w-full h-48 bg-primary/5">
         {shouldLoadImage ? (
-          <Image src={imageUrl} alt={title} fill className="object-cover animate-in fade-in duration-700" unoptimized />
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            className="object-cover animate-in fade-in duration-700"
+            unoptimized
+          />
         ) : (
           <div className="w-full h-full bg-border/30 animate-pulse flex items-center justify-center">
-            <span className="text-text-muted text-xs font-medium">Meracik foto...</span>
+            <span className="text-text-muted text-xs font-medium">
+              Meracik foto...
+            </span>
           </div>
         )}
         <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">

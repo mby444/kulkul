@@ -25,6 +25,8 @@ export default function UploadPage() {
     setPreviewUrl,
   } = useAppStore();
 
+  console.log(ingredients);
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [manualInput, setManualInput] = useState("");
 
@@ -32,7 +34,7 @@ export default function UploadPage() {
     "Sedang mendeteksi isi kulkasmu...",
     "Mencari bahan yang tersembunyi...",
     "Menganalisis sayuran dan bumbu...",
-    "Membuat daftar bahan ajaib..."
+    "Membuat daftar bahan ajaib...",
   ];
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
 
@@ -175,10 +177,7 @@ export default function UploadPage() {
       }
 
       if (data.detected_ingredients) {
-        const newIngredients = Array.from(
-          new Set([...ingredients, ...data.detected_ingredients]),
-        );
-        setIngredients(newIngredients);
+        setIngredients(data.detected_ingredients);
       }
     } catch (error: any) {
       console.error(error);
@@ -223,7 +222,7 @@ export default function UploadPage() {
       {/* Header Back */}
       <div className="sticky top-0 z-20 bg-bg-app/90 backdrop-blur-md px-4 py-4 flex items-center gap-4">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push("/")}
           className="p-2 hover:bg-black/5 rounded-full transition-colors"
         >
           <ArrowLeft size={24} className="text-text-main" />
@@ -246,12 +245,18 @@ export default function UploadPage() {
         >
           {previewUrl ? (
             <div className="absolute inset-0 w-full h-full">
-              <img src={previewUrl} alt="Preview Kulkas" className="w-full h-full object-cover opacity-60" />
+              <img
+                src={previewUrl}
+                alt="Preview Kulkas"
+                className="w-full h-full object-cover opacity-60"
+              />
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20">
                 <div className="bg-white p-3 rounded-full shadow-md mb-2">
                   <Camera size={24} className="text-primary" />
                 </div>
-                <h3 className="font-bold text-white text-sm bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">Ganti Foto</h3>
+                <h3 className="font-bold text-white text-sm bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
+                  Ganti Foto
+                </h3>
               </div>
             </div>
           ) : (
@@ -262,9 +267,7 @@ export default function UploadPage() {
               <h3 className="font-bold text-lg mb-1 text-text-main">
                 Unggah Foto Isi Kulkas
               </h3>
-              <p className="text-sm text-text-muted mt-1">
-                Format PNG / JPG
-              </p>
+              <p className="text-sm text-text-muted mt-1">Format PNG / JPG</p>
             </>
           )}
         </div>
@@ -374,7 +377,7 @@ export default function UploadPage() {
                 onClick={handleGenerateRecipe}
                 className="shadow-lg shadow-primary/30 text-lg py-6 h-14"
               >
-                Lihat Hasil Resep (Tersimpan)
+                Lihat Resep Sebelumnya (Tersimpan)
               </Button>
               <Button
                 fullWidth

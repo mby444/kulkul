@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import { RecipeCard } from "@/components/ui/RecipeCard";
-import { useAppStore, Recipe } from "@/store/useAppStore";
+import { useAppStore } from "@/store/useAppStore";
 import useIsHydrated from "@/hooks/useIsHydrated";
 
 export default function RecipesPage() {
@@ -16,6 +16,7 @@ export default function RecipesPage() {
     selectedPantry,
     cookingStyle,
     setCurrentRecipeId,
+    setCurrentCookStep,
   } = useAppStore();
   const [isGenerating, setIsGenerating] = useState(false);
   const isHydrated = useIsHydrated();
@@ -89,6 +90,7 @@ export default function RecipesPage() {
 
   const handleCookClick = (id: string) => {
     setCurrentRecipeId(id);
+    setCurrentCookStep(1);
     router.push(`/cook/${id}`);
   };
 
@@ -97,7 +99,7 @@ export default function RecipesPage() {
       {/* Header Back */}
       <div className="sticky top-0 z-20 bg-bg-app/90 backdrop-blur-md px-4 py-4 flex items-center gap-4">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push("/upload")}
           className="p-2 hover:bg-black/5 rounded-full transition-colors"
         >
           <ArrowLeft size={24} className="text-text-main" />
