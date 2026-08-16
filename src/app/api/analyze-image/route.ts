@@ -43,11 +43,16 @@ export async function POST(req: NextRequest) {
     const validatedData = AnalyzeResponseSchema.parse(jsonOutput);
 
     console.log("validatedData", validatedData);
-    
+
     if (validatedData.detected_ingredients.length === 0) {
       return NextResponse.json(
-        { error: { message: "Tidak ada bahan makanan yang terdeteksi. Mohon ulangi upload foto" } },
-        { status: 400 }
+        {
+          error: {
+            message:
+              "Tidak ada bahan makanan yang terdeteksi. Mohon ulangi upload foto",
+          },
+        },
+        { status: 400 },
       );
     }
 
@@ -75,7 +80,7 @@ function analyzeImageWithAI(base64Image: string, mimeType: string) {
         role: "user",
         parts: [
           {
-            text: 'Identifikasi bahan-bahan makanan mentah atau bahan masakan di dalam gambar ini SECARA SPESIFIK dan DETAIL. JANGAN menggunakan kata umum seperti "Bawang", "Sayur", atau "Daging". Gunakan nama spesifik seperti "Bawang Putih", "Bawang Merah", "Bawang Bombay", "Sawi Hijau", "Daging Sapi", atau "Daging Ayam". Abaikan botol minuman ringan, makanan jadi, wadah kosong, atau objek non-makanan. Kembalikan array string berisi nama-nama bahan dasar tersebut dalam bahasa Indonesia.',
+            text: 'Identifikasi bahan-bahan makanan mentah atau bahan masakan di dalam gambar ini SECARA SPESIFIK dan DETAIL. WAJIB mencantumkan perkiraan jumlah dan satuan untuk setiap bahan dengan format "[jumlah] [satuan] [nama bahan]". Contoh: "8 siung Bawang merah", "1 cm Lengkuas", "20 buah Cabe merah keriting", "1 genggam Daun kemangi", "1 btg Serai", "2 butir Telur", "250 gram Daging Ayam". JANGAN menggunakan kata umum seperti "Bawang" atau "Sayur". Abaikan botol minuman ringan, makanan jadi, wadah kosong, atau objek non-makanan. Kembalikan array string berisi bahan dasar beserta kuantitasnya tersebut dalam bahasa Indonesia.',
           },
           {
             inlineData: {
@@ -95,7 +100,7 @@ function analyzeImageWithAI(base64Image: string, mimeType: string) {
           detected_ingredients: {
             type: "ARRAY",
             description:
-              "Daftar bahan makanan mentah (sayur, daging, bumbu dasar) yang terdeteksi. HARUS sangat spesifik (misal: 'Bawang Merah' bukan 'Bawang', 'Daging Ayam' bukan 'Daging'). Gunakan bahasa Indonesia.",
+              "Daftar bahan makanan mentah (sayur, daging, bumbu dasar) yang terdeteksi. WAJIB menggunakan format '[jumlah] [satuan] [nama bahan]' (misal: '8 siung Bawang Merah', '250 gram Daging Ayam'). Gunakan bahasa Indonesia.",
             items: {
               type: "STRING",
             },
