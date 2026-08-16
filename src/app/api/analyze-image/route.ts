@@ -75,7 +75,7 @@ function analyzeImageWithAI(base64Image: string, mimeType: string) {
         role: "user",
         parts: [
           {
-            text: 'Identifikasi bahan-bahan makanan mentah atau bahan masakan yang ada di dalam gambar ini. Abaikan botol minuman ringan, makanan jadi, wadah kosong, atau objek non-makanan. Kembalikan array string berisi nama-nama bahan dasar dalam bahasa Indonesia (misal: "Tomat", "Telur", "Bawang Putih").',
+            text: 'Identifikasi bahan-bahan makanan mentah atau bahan masakan di dalam gambar ini SECARA SPESIFIK dan DETAIL. JANGAN menggunakan kata umum seperti "Bawang", "Sayur", atau "Daging". Gunakan nama spesifik seperti "Bawang Putih", "Bawang Merah", "Bawang Bombay", "Sawi Hijau", "Daging Sapi", atau "Daging Ayam". Abaikan botol minuman ringan, makanan jadi, wadah kosong, atau objek non-makanan. Kembalikan array string berisi nama-nama bahan dasar tersebut dalam bahasa Indonesia.',
           },
           {
             inlineData: {
@@ -95,7 +95,7 @@ function analyzeImageWithAI(base64Image: string, mimeType: string) {
           detected_ingredients: {
             type: "ARRAY",
             description:
-              "Daftar bahan makanan mentah (sayur, daging, bumbu dasar) yang terdeteksi. Gunakan bahasa Indonesia.",
+              "Daftar bahan makanan mentah (sayur, daging, bumbu dasar) yang terdeteksi. HARUS sangat spesifik (misal: 'Bawang Merah' bukan 'Bawang', 'Daging Ayam' bukan 'Daging'). Gunakan bahasa Indonesia.",
             items: {
               type: "STRING",
             },

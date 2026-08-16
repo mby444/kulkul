@@ -76,17 +76,18 @@ function generateRecipeWithAI(
   pantryStaples: string[],
   cookingStyle: string,
 ) {
-  const prompt = `Kamu adalah seorang Chef AI profesional. Buatkan 2 hingga 3 rekomendasi resep masakan yang lezat berdasarkan parameter berikut:
-- Bahan utama yang harus digunakan (bisa sebagian atau semua): ${ingredients.join(", ")}
-- Bumbu dasar di dapur yang bisa dipakai: ${pantryStaples.join(", ")}
+  const prompt = `Kamu adalah seorang Chef AI profesional yang sangat kreatif walau dengan bahan terbatas. Buatkan 2 hingga 3 rekomendasi resep masakan berdasarkan parameter berikut:
+- Bahan utama yang TERSEDIA: ${ingredients.length > 0 ? ingredients.join(", ") : "Tidak ada bahan utama"}
+- Bumbu dasar dapur yang TERSEDIA: ${pantryStaples.join(", ")}
 - Gaya masakan: ${cookingStyle}
 
-Instruksi:
-1. Pastikan resep realistis dan langkahnya mudah diikuti.
-2. Hitung estimasi waktu persiapan (prep_time_minutes).
-3. Untuk langkah (steps), jika butuh didiamkan/dimasak dalam waktu tertentu, isi timer_seconds dengan detiknya (misal: 3 menit = 180). Jika tidak, isi 0.
-4. Buat id yang unik (contoh: "recipe-1", "recipe-2").
-5. Semua bahasa dalam bahasa Indonesia.`;
+Instruksi SANGAT PENTING:
+1. DILARANG KERAS menggunakan bahan utama, sayuran, daging, atau bumbu tambahan APAPUN selain yang tercantum pada daftar TERSEDIA di atas! (Tidak boleh berasumsi pengguna memiliki bawang, gula, atau air jika tidak ada di daftar).
+2. Jika bahan sangat sedikit, buat resep sesederhana mungkin (contoh: telur rebus bumbu garam) asalkan masuk akal.
+3. Hitung estimasi waktu persiapan (prep_time_minutes).
+4. Untuk langkah (steps), jika butuh didiamkan/dimasak dalam waktu tertentu, isi timer_seconds dengan detiknya (misal: 3 menit = 180). Jika tidak, isi 0.
+5. Buat id yang unik (contoh: "recipe-1", "recipe-2").
+6. Tulis semua respon dalam bahasa Indonesia.`;
 
   return ai.models.generateContent({
     model: "gemini-3.1-flash-lite",
