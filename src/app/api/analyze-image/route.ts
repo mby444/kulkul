@@ -42,6 +42,15 @@ export async function POST(req: NextRequest) {
     const jsonOutput = JSON.parse(text);
     const validatedData = AnalyzeResponseSchema.parse(jsonOutput);
 
+    console.log("validatedData", validatedData);
+    
+    if (validatedData.detected_ingredients.length === 0) {
+      return NextResponse.json(
+        { error: { message: "Tidak ada bahan makanan yang terdeteksi. Mohon ulangi upload foto" } },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(validatedData);
   } catch (error) {
     console.error("Error saat menganalisis gambar:", error);

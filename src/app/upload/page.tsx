@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { Camera, Plus, ArrowLeft } from "lucide-react";
+import { Camera, Plus, ArrowLeft, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { CheckboxGrid } from "@/components/CheckboxGrid";
@@ -21,10 +21,32 @@ export default function UploadPage() {
     setCookingStyle,
     generatedRecipes,
     setGeneratedRecipes,
+    previewUrl,
+    setPreviewUrl,
   } = useAppStore();
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [manualInput, setManualInput] = useState("");
+
+  const loadingMessages = [
+    "Sedang mendeteksi isi kulkasmu...",
+    "Mencari bahan yang tersembunyi...",
+    "Menganalisis sayuran dan bumbu...",
+    "Membuat daftar bahan ajaib..."
+  ];
+  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isProcessing) {
+      interval = setInterval(() => {
+        setLoadingMessageIndex((prev) => (prev + 1) % loadingMessages.length);
+      }, 2500);
+    } else {
+      setLoadingMessageIndex(0);
+    }
+    return () => clearInterval(interval);
+  }, [isProcessing]);
 
   const pantryOptions = [
     "Garam",
@@ -117,6 +139,9 @@ export default function UploadPage() {
       return;
     }
 
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+
     setIsProcessing(true);
     try {
       // Kompresi dan resize gambar
@@ -140,20 +165,24 @@ export default function UploadPage() {
         body: formData,
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
+        if (data.error && data.error.message) {
+          throw data.error;
+        }
         throw new Error("Gagal menganalisis gambar");
       }
 
-      const data = await res.json();
       if (data.detected_ingredients) {
         const newIngredients = Array.from(
           new Set([...ingredients, ...data.detected_ingredients]),
         );
         setIngredients(newIngredients);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert("Terjadi kesalahan saat memproses gambar.");
+      alert(error.message || "Terjadi kesalahan saat memproses gambar.");
     } finally {
       setIsProcessing(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -212,25 +241,39 @@ export default function UploadPage() {
         />
         {/* Upload Zone */}
         <div
-          className="border-2 border-dashed border-primary/40 bg-primary/5 rounded-3xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-primary/10 transition-colors mb-8 shadow-sm"
+          className="border-2 border-dashed border-primary/40 bg-primary/5 rounded-3xl p-8 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-primary/10 transition-colors mb-8 shadow-sm relative overflow-hidden min-h-[200px]"
           onClick={handleUploadClick}
         >
-          <div className="bg-white p-4 rounded-full shadow-sm mb-4">
-            <Camera size={36} className="text-primary" />
-          </div>
-          <h3 className="font-bold text-lg mb-1 text-text-main">
-            Ambil / Upload Foto
-          </h3>
-          <p className="text-sm text-text-muted mt-1">
-            Klik untuk mensimulasikan deteksi AI
-          </p>
+          {previewUrl ? (
+            <div className="absolute inset-0 w-full h-full">
+              <img src={previewUrl} alt="Preview Kulkas" className="w-full h-full object-cover opacity-60" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20">
+                <div className="bg-white p-3 rounded-full shadow-md mb-2">
+                  <Camera size={24} className="text-primary" />
+                </div>
+                <h3 className="font-bold text-white text-sm bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">Ganti Foto</h3>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="bg-white p-4 rounded-full shadow-sm mb-4">
+                <Camera size={36} className="text-primary" />
+              </div>
+              <h3 className="font-bold text-lg mb-1 text-text-main">
+                Unggah Foto Isi Kulkas
+              </h3>
+              <p className="text-sm text-text-muted mt-1">
+                Format PNG / JPG
+              </p>
+            </>
+          )}
         </div>
 
         {isProcessing && (
           <div className="flex flex-col items-center justify-center py-10 animate-in fade-in zoom-in duration-300">
             <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-primary mb-5"></div>
-            <p className="text-text-muted font-medium animate-pulse">
-              Sedang mendeteksi isi kulkasmu...
+            <p className="text-text-muted font-medium animate-pulse text-center transition-all">
+              {loadingMessages[loadingMessageIndex]}
             </p>
           </div>
         )}
@@ -348,7 +391,7 @@ export default function UploadPage() {
               onClick={handleGenerateRecipe}
               className="shadow-lg shadow-primary/30 text-lg py-6 h-14"
             >
-              Cari Resep Masakan
+              Cari Resep Masakan <Sparkles className="ml-2" size={20} />
             </Button>
           )}
         </div>

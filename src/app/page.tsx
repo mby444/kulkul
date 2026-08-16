@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Camera, UtensilsCrossed, Sparkles, ChefHat } from "lucide-react";
+import { Camera, UtensilsCrossed, Sparkles, ChefHat, Bot } from "lucide-react";
 
 export default function LandingPage() {
   const quickRecipes = [
@@ -11,8 +11,10 @@ export default function LandingPage() {
 
   return (
     <main className="flex-1 flex flex-col relative overflow-y-auto pb-8 bg-bg-app">
-      {/* Header Greeting */}
-      <header className="px-6 pt-10 pb-6 flex items-center justify-between">
+      <header className="px-6 pt-10 pb-6 flex items-center gap-4">
+        <div className="bg-primary/10 p-3 rounded-2xl shrink-0">
+          <UtensilsCrossed className="text-primary" size={28} />
+        </div>
         <div>
           <h2 className="text-xl font-bold text-text-main font-sans">
             Halo, mau masak apa hari ini? 👋
@@ -20,9 +22,6 @@ export default function LandingPage() {
           <p className="text-text-muted text-sm mt-1">
             Kulik isi kulkasmu, masak lezat tanpa pusing!
           </p>
-        </div>
-        <div className="bg-primary/10 p-2 rounded-xl">
-          <UtensilsCrossed className="text-primary" size={24} />
         </div>
       </header>
 
@@ -107,8 +106,8 @@ export default function LandingPage() {
             <div className="w-0.5 h-8 bg-border my-1 shrink-0"></div>
           </div>
           <div className="pb-4">
-            <h4 className="font-bold text-text-main text-sm">
-              📸 Foto Isi Kulkas
+            <h4 className="font-bold text-text-main text-sm flex items-center gap-2">
+              <Camera size={18} className="text-primary" /> Foto Isi Kulkas
             </h4>
             <p className="text-text-muted text-xs mt-1 leading-relaxed">
               Ambil atau upload foto sisa bahan makanan yang ada di kulkasmu.
@@ -124,8 +123,8 @@ export default function LandingPage() {
             <div className="w-0.5 h-8 bg-border my-1 shrink-0"></div>
           </div>
           <div className="pb-4">
-            <h4 className="font-bold text-text-main text-sm">
-              🤖 AI Racik Resep
+            <h4 className="font-bold text-text-main text-sm flex items-center gap-2">
+              <Bot size={18} className="text-primary" /> AI Racik Resep
             </h4>
             <p className="text-text-muted text-xs mt-1 leading-relaxed">
               KulKul mendeteksi bahan otomatis dan meracik pilihan resep lezat.
@@ -140,8 +139,8 @@ export default function LandingPage() {
             </div>
           </div>
           <div>
-            <h4 className="font-bold text-text-main text-sm">
-              🍳 Masak Tanpa Pusing
+            <h4 className="font-bold text-text-main text-sm flex items-center gap-2">
+              <ChefHat size={18} className="text-primary" /> Masak Tanpa Pusing
             </h4>
             <p className="text-text-muted text-xs mt-1 leading-relaxed">
               Pilih resep favoritmu dan ikuti mode memasak interaktif langkah

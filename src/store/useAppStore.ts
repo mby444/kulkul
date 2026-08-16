@@ -19,6 +19,7 @@ type AppState = {
   generatedRecipes: Recipe[];
   currentRecipeId: string | null;
   currentCookStep: number;
+  previewUrl: string | null;
   
   setIngredients: (ingredients: string[]) => void;
   setSelectedPantry: (pantry: string[]) => void;
@@ -26,6 +27,7 @@ type AppState = {
   setGeneratedRecipes: (recipes: Recipe[]) => void;
   setCurrentRecipeId: (id: string | null) => void;
   setCurrentCookStep: (step: number) => void;
+  setPreviewUrl: (url: string | null) => void;
   clearSession: () => void;
 };
 
@@ -38,6 +40,7 @@ export const useAppStore = create<AppState>()(
       generatedRecipes: [],
       currentRecipeId: null,
       currentCookStep: 1,
+      previewUrl: null,
 
       setIngredients: (ingredients) => set({ ingredients }),
       setSelectedPantry: (selectedPantry) => set({ selectedPantry }),
@@ -45,6 +48,7 @@ export const useAppStore = create<AppState>()(
       setGeneratedRecipes: (generatedRecipes) => set({ generatedRecipes }),
       setCurrentRecipeId: (currentRecipeId) => set({ currentRecipeId }),
       setCurrentCookStep: (currentCookStep) => set({ currentCookStep }),
+      setPreviewUrl: (previewUrl) => set({ previewUrl }),
       clearSession: () => set({
         ingredients: [],
         selectedPantry: ["Garam", "Minyak Goreng"],
