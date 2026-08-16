@@ -7,7 +7,7 @@
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [About](#about)
 - [Features](#features)
@@ -25,23 +25,23 @@
 
 ---
 
-## 💡 About
+## About
 
 Pernah bingung mau masak apa dengan sisa bahan seadanya di kulkas? **KulKul** hadir untuk menyelesaikan masalah tersebut. Cukup unggah foto isi kulkas Anda, dan AI dari Google Gemini akan mendeteksi bahan mentah yang ada, lalu meracik rekomendasi resep langkah demi langkah yang dilengkapi dengan mode memasak interaktif.
 
 ---
 
-## ✨ Features
+## Features
 
-- **📸 Computer Vision Ingredient Detection**: Unggah foto isi kulkas, dan AI akan mendeteksi bahan mentah (sayur, daging, bumbu) yang spesifik beserta kuantitasnya.
-- **👨‍🍳 AI Recipe Generator**: Menghasilkan 2-3 resep unik berdasarkan kombinasi bahan yang terdeteksi, bumbu dasar, dan gaya masakan pilihan Anda (misal: "Ala Anak Kosan" atau "Restoran Bintang 5").
-- **🎨 Dynamic Food Photography**: Setiap resep dilengkapi gambar visual hidangan yang dibuat secara instan oleh Pollinations.ai.
-- **⏱️ Interactive Cook Mode**: Panduan memasak langkah demi langkah dengan _built-in countdown timer_ (berdilengkapi notifikasi _audio chime_) untuk memastikan masakan Anda matang sempurna.
-- **💾 State Persistence**: Keranjang bahan makanan dan resep tersimpan aman di browser menggunakan _Zustand Persist_, sehingga tidak hilang saat direfresh.
+- **Computer Vision Ingredient Detection**: Unggah foto isi kulkas, dan AI akan mendeteksi bahan mentah (sayur, daging, bumbu) yang spesifik beserta kuantitasnya.
+- **AI Recipe Generator**: Menghasilkan 2-3 resep unik berdasarkan kombinasi bahan yang terdeteksi, bumbu dasar, dan gaya masakan pilihan Anda (misal: "Ala Anak Kosan" atau "Restoran Bintang 5").
+- **Dynamic Food Photography**: Setiap resep dilengkapi gambar visual hidangan yang dibuat secara instan oleh Pollinations.ai.
+- **Interactive Cook Mode**: Panduan memasak langkah demi langkah dengan _built-in countdown timer_ (berdilengkapi notifikasi _audio chime_) untuk memastikan masakan Anda matang sempurna.
+- **State Persistence**: Keranjang bahan makanan dan resep tersimpan aman di browser menggunakan _Zustand Persist_, sehingga tidak hilang saat direfresh.
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend**: Next.js (App Router), React, TailwindCSS, Zustand
 - **Backend**: Next.js Route Handlers (Serverless API)
@@ -52,7 +52,7 @@ Pernah bingung mau masak apa dengan sisa bahan seadanya di kulkas? **KulKul** ha
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 Aplikasi ini menggunakan pola arsitektur **Fullstack Serverless** dengan Next.js:
 
@@ -62,7 +62,7 @@ Aplikasi ini menggunakan pola arsitektur **Fullstack Serverless** dengan Next.js
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 ├── src/
@@ -83,7 +83,7 @@ Aplikasi ini menggunakan pola arsitektur **Fullstack Serverless** dengan Next.js
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -115,7 +115,7 @@ Aplikasi sekarang dapat diakses di `http://localhost:3000`.
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 Aplikasi ini membutuhkan variabel lingkungan (Environment Variables) agar dapat berkomunikasi dengan Google AI.
 Buat file bernama `.env.local` di dalam folder `code/` dan isi dengan konfigurasi berikut:
@@ -130,14 +130,14 @@ POLLINATIONS_API_KEY=YourOptionalKeyHere...
 
 ---
 
-## 🔒 Security
+## Security
 
 - **Penyimpanan API Key**: Jangan pernah menaruh `GEMINI_API_KEY` di kode _frontend_ (`NEXT_PUBLIC_...`). Semua panggilan ke AI dialihkan melalui `/api/` (Next.js server-side) agar kredensial tetap aman.
 - **Validasi Zod**: Semua data JSON yang dikembalikan oleh AI - yang rentan berhalusinasi - divalidasi secara ketat (_parsing_) menggunakan Zod sebelum dikirim ke UI.
 
 ---
 
-## 🤝 How to Contribute
+## How to Contribute
 
 Proyek ini terbuka untuk umum! Jika Anda ingin menambahkan fitur masakan baru atau memperbaiki bug:
 
@@ -149,7 +149,7 @@ Proyek ini terbuka untuk umum! Jika Anda ingin menambahkan fitur masakan baru at
 
 ---
 
-## 🔮 What's Next?
+## What's Next?
 
 - [ ] Integrasi dengan API Supermarket lokal untuk perhitungan estimasi harga bahan kurang.
 - [ ] Opsi filter untuk jenis diet (Keto, Vegan, Halal).
@@ -157,13 +157,13 @@ Proyek ini terbuka untuk umum! Jika Anda ingin menambahkan fitur masakan baru at
 
 ---
 
-## 📄 License
+## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-## 🙏 Acknowledgements
+## Acknowledgements
 
 - [Google AI Studio (Gemini)](https://ai.google.dev/)
 - [Pollinations.ai](https://pollinations.ai/) untuk _generative food image_ gratis.
@@ -172,6 +172,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-## 👤 Author
+## Author
 
 - **AI Cooking Companion Team**
